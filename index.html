@@ -2,30 +2,27 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>NPR Ticker</title>
 <style>
   body { 
     margin: 0; 
-    /* FLIPPED COLORS BELOW */
-    background-color: #ffffff; /* White background */
-    color: #1a1a1a;            /* Dark text */
+    background-color: #1a1a1a; /* Homarr dark mode background */
+    color: #ffffff;            /* White text */
     font-family: sans-serif; 
     overflow: hidden; 
     display: flex; 
     align-items: center; 
-    height: 100vh; 
+    height: 100%; 
+    min-height: 50px;          /* Prevents iFrame collapse */
   }
   .ticker-container { 
     width: 100%; 
     overflow: hidden; 
     white-space: nowrap; 
-    box-sizing: border-box; 
   }
   .ticker-text { 
     display: inline-block; 
     padding-left: 100%; 
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-    will-change: transform;
     animation: ticker 40s linear infinite; 
     font-size: 1.2rem; 
   }
@@ -33,37 +30,34 @@
     margin-right: 40px;
   }
   @keyframes ticker { 
-    0% { -webkit-transform: translateX(0); transform: translateX(0); } 
-    100% { -webkit-transform: translateX(-100%); transform: translateX(-100%); } 
+    0% { transform: translateX(0); } 
+    100% { transform: translateX(-100%); } 
   }
 </style>
 </head>
 <body>
 
 <div class="ticker-container">
-  <div class="ticker-text" id="ticker">Loading latest headlines...</div>
+  <div class="ticker-text" id="ticker">Loading NPR News...</div>
 </div>
 
 <script>
-  // Swapped to NPR
   const rssUrl = 'https://feeds.npr.org/1001/rss.xml';
   const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
   
   fetch(apiUrl)
-    .then(response => response.json())
+    .then(res => res.json())
     .then(data => {
-      if (data.status === 'ok' && data.items && data.items.length > 0) {
-        let html = "";
-        data.items.forEach(item => {
-          html += `<span>${item.title} &nbsp;&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp; </span>`;
-        });
-        document.getElementById("ticker").innerHTML = html;
+      if (data.status === 'ok' && data.items.length > 0) {
+        // This maps the data into HTML cleanly without a clunky loop
+        const headlines = data.items.map(item => `<span>${item.title} &nbsp;&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;</span>`).join('');
+        document.getElementById("ticker").innerHTML = headlines;
       } else {
-        document.getElementById("ticker").innerHTML = "Connected, but the feed was empty! Try another RSS link.";
+        document.getElementById("ticker").innerHTML = "NPR Feed is empty.";
       }
     })
-    .catch(error => {
-      document.getElementById("ticker").innerHTML = "Safari privacy shields blocked the connection.";
+    .catch(() => {
+      document.getElementById("ticker").innerHTML = "Error loading NPR feed.";
     });
 </script>
 
