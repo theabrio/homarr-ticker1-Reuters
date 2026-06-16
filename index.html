@@ -5,8 +5,9 @@
 <style>
   body { 
     margin: 0; 
-    background-color: #ffffff;
-    color: #36495a; 
+    /* FLIPPED COLORS BELOW */
+    background-color: #ffffff; /* White background */
+    color: #1a1a1a;            /* Dark text */
     font-family: sans-serif; 
     overflow: hidden; 
     display: flex; 
@@ -22,12 +23,9 @@
   .ticker-text { 
     display: inline-block; 
     padding-left: 100%; 
-    
-    /* Forces Safari to use hardware acceleration for ultra-wide elements */
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
     will-change: transform;
-    
     animation: ticker 40s linear infinite; 
     font-size: 1.2rem; 
   }
@@ -47,13 +45,13 @@
 </div>
 
 <script>
-  const rssUrl = 'https://feeds.npr.org/1001/rss.xml';
+  // Swapped to BBC World News
+  const rssUrl = 'http://feeds.bbci.co.uk/news/world/rss.xml';
   const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
   
   fetch(apiUrl)
     .then(response => response.json())
     .then(data => {
-      // Checks if data actually exists to prevent a blank screen
       if (data.status === 'ok' && data.items && data.items.length > 0) {
         let html = "";
         data.items.forEach(item => {
