@@ -41,14 +41,17 @@
 </div>
 
 <script>
+  // You can change this URL to any RSS feed you like!
   const rssUrl = 'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml';
-  const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
+  
+  // Using corsproxy.io which is usually more reliable for strict browsers
+  const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(rssUrl);
   
   fetch(proxyUrl)
-    .then(response => response.json())
-    .then(data => {
+    .then(response => response.text())
+    .then(text => {
       const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(data.contents, "text/xml");
+      const xmlDoc = parser.parseFromString(text, "text/xml");
       const items = xmlDoc.querySelectorAll("item");
       let html = "";
       
@@ -60,7 +63,7 @@
       document.getElementById("ticker").innerHTML = html;
     })
     .catch(error => {
-      document.getElementById("ticker").innerHTML = "Error loading news feed.";
+      document.getElementById("ticker").innerHTML = "Still blocked! Try swapping the RSS URL.";
     });
 </script>
 
